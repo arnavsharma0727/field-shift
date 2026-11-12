@@ -27,7 +27,7 @@ Then visit `http://localhost:8000`. Run the dependency-free analysis tests with 
 
 ## Method in brief
 
-The window is May–September in the Northern Hemisphere and November–March, grouped by calendar year, in the Southern Hemisphere. A year is used if it has at least 300 valid daily observations and 110 valid growing-season days. The dry analog is the complete year with the lowest seasonal precipitation; ties go to the year with more hot days. Median comparisons are descriptive. Root-zone wetness is a modeled fraction on a coarse grid, not a field soil test or direct SMAP measurement. `EVPTRNS` is energy flux in MJ/m²/day, not millimeters of irrigation water. The thresholds in `assessPathways` are explicit screening heuristics, not statistically calibrated performance estimates.
+The window is May–September in the Northern Hemisphere and November–March, assigned to the season-ending year, in the Southern Hemisphere. A year is used if it has at least 300 valid daily observations and 110 valid growing-season days. The dry analog is the complete year with the lowest seasonal precipitation; ties go to the year with more hot days. Median comparisons are descriptive. Root-zone wetness is a modeled fraction on a coarse grid, not a field soil test or direct SMAP measurement. `EVPTRNS` is energy flux in MJ/m²/day, not millimeters of irrigation water. The thresholds in `assessPathways` are explicit screening heuristics, not statistically calibrated performance estimates.
 
 ## Files
 
