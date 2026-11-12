@@ -1,8 +1,12 @@
 # Field Shift
 
-**[Open the live research workspace](https://arnavsharma0727.github.io/field-shift/)** · [Research and methods](RESEARCH.md)
+**[Open the public website](https://arnavsharma0727.github.io/field-shift/)** · [Launch the platform](https://arnavsharma0727.github.io/field-shift/app/) · [Scenario Lab](https://arnavsharma0727.github.io/field-shift/app/scenarios/) · [Research and methods](RESEARCH.md)
 
 Field Shift is an independent 2026 NASA Space Apps Challenge prototype. It audits the environmental assumptions behind a rotation before presenting alternatives. The distinctive question is: **do recent observed conditions still resemble the conditions used as a baseline, and what field evidence is needed before a small trial?**
+
+## Public website and routes
+
+The homepage is a light, product-led introduction with a live embedded app preview and a NASA POWER comparison for the Shenandoah Valley example. The comparison loads public observations and shows an unavailable state when the request fails. `/app/` is the full geospatial workspace; `/app/scenarios/` is a focused scenario route. On GitHub Pages these paths live under the repository prefix `/field-shift/`. The original `/dist/` app remains as a compatibility route.
 
 ## Research workspace
 
@@ -26,7 +30,10 @@ Run `npm test` for dependency-free calculations. Browser access to NASA POWER, N
 
 ## Architecture
 
-- `dist/index.html` — semantic research workspace
+- `index.html`, `landing.css`, `landing.js` — public website and live NASA comparison
+- `app/index.html`, `app/theme.css` — light themed product route using the shared analysis implementation
+- `app/scenarios/` — dedicated scenario workspace with transparent gates
+- `dist/index.html` — original research workspace compatibility route
 - `dist/styles.css` — restrained, responsive scientific design system
 - `dist/app.js` — NASA request, map and imagery controls, charts, audit presentation, export
 - `dist/analytics.js` — pure annual aggregation, dry analog, audit, decision gates
