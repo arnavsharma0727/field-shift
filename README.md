@@ -23,10 +23,10 @@ NASA Harvest crop-order research informs the sequence caution, while 2026 HLS ph
 Serve `dist` as a static site, for example:
 
 ```bash
-python3 -m http.server 8000 --directory dist
+python3 -m http.server 8000
 ```
 
-Run `npm test` for dependency-free calculations. Browser access to NASA POWER, NASA GIBS, MapLibre's module CDN, and OpenStreetMap tiles is required for the full workspace. If POWER is unavailable, the climate audit is withheld and no example observations are substituted. If the map library is unavailable, coordinates and climate analysis remain accessible.
+Visit `http://localhost:8000/` for the public site, `http://localhost:8000/app/` for the platform, and `http://localhost:8000/app/scenarios/` for the Scenario Lab. Run `npm test` for dependency-free calculations. Browser access to NASA POWER, NASA GIBS, MapLibre's module CDN, and OpenStreetMap tiles is required for the full workspace. If POWER is unavailable, the climate audit is withheld and no example observations are substituted. If the map library is unavailable, coordinates and climate analysis remain accessible.
 
 ## Architecture
 
