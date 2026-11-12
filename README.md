@@ -2,6 +2,8 @@
 
 A NASA Space Apps 2026 crop-rotation explorer prototype.
 
+**[Open the live app](https://arnavsharma0727.github.io/field-shift/)** · [Research and data provenance](RESEARCH.md)
+
 ## Research foundation
 
 The app combines one live NASA data product with lessons from recent NASA-supported agricultural work. The research is used to shape questions and caution flags, not to claim the studies predict outcomes for a selected field.
