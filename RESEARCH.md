@@ -14,7 +14,7 @@ The app calls the [NASA POWER Daily API](https://power.larc.nasa.gov/docs/servic
 | Evapotranspiration energy flux | Mean daily `EVPTRNS`, MJ/m²/day | Water/energy context; **not** a water depth or crop-specific ET requirement |
 | Dry-year analog | Year with least growing-season rain among complete years | Observed historical comparator; not a future-year prediction |
 
-Only days with plausible values for all four parameters are retained. Years require 300 valid days and 110 seasonal days. At least five complete years are required. Annual bars and the selected analog are included in the downloadable evidence packet. The sensitivity slider multiplies the analog's rain total by 1 minus the chosen percentage, leaving wetness, heat, and other observations unchanged. This deliberately avoids pretending the slider is a physical climate simulation.
+Only days with plausible values for all four parameters are retained. Southern Hemisphere November–March seasons join November and December to the following January–March and are labeled by the ending year. Years require 300 valid days and 110 seasonal days. At least five complete years are required. Annual bars and the selected analog are included in the downloadable evidence packet. The sensitivity slider multiplies the analog's rain total by 1 minus the chosen percentage, leaving wetness, heat, and other observations unchanged. This deliberately avoids pretending the slider is a physical climate simulation.
 
 ## Research translated into behavior
 
