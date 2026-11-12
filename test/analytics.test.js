@@ -2,10 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {summarizePower,assessPathways,evidencePacket} from '../dist/analytics.js';
 
-function fixture(){
+function fixture(start=2018,end=2022){
   const keys=['PRECTOTCORR','T2M_MAX','GWETROOT','EVPTRNS'];
   const parameter=Object.fromEntries(keys.map(k=>[k,{}]));
-  for(let year=2018;year<=2022;year++){
+  for(let year=start;year<=end;year++){
     for(let date=new Date(Date.UTC(year,0,1));date.getUTCFullYear()===year;date.setUTCDate(date.getUTCDate()+1)){
       const day=date.toISOString().slice(0,10).replaceAll('-','');
       const warm=date.getUTCMonth()>=4&&date.getUTCMonth()<=8;
@@ -44,4 +44,19 @@ test('packet exposes input, observed record, and interpretation limits',()=>{
   assert.equal(packet.data.driestAnalog.year,2020);
   assert.equal(packet.pathways.length,3);
   assert.match(packet.limitations.join(' '),/does not ingest HLS/i);
+});
+
+test('Southern Hemisphere season joins November–December to the following January–March',()=>{
+  const raw=fixture(2017,2023);
+  for(const day of Object.keys(raw.properties.parameter.PRECTOTCORR)){
+    if((day>='20191101'&&day<='20191231')||(day>='20200101'&&day<='20200331')){
+      raw.properties.parameter.PRECTOTCORR[day]=.2;
+      raw.properties.parameter.GWETROOT[day]=.15;
+    }
+  }
+  const data=summarizePower(raw,-35);
+  assert.equal(data.driest.year,2020);
+  assert.equal(data.driest.rootWetness,.15);
+  assert.equal(data.driest.seasonRain,30);
+  assert.match(data.seasonLabel,/season ending year/);
 });
