@@ -96,3 +96,26 @@ export function evidencePacket(data,inputs,pathways){
     pathways:pathways.map(({id,title,sequence,gate,reasons,measurement})=>({id,title,sequence,gate,reasons,measurement})),
     research:RESEARCH,limitations:['NASA POWER root-zone wetness is a modeled, area-scale product; it is not a field soil test or direct SMAP observation.','HLS cover-crop research informs verification design; this app does not ingest HLS imagery or classify cover crops.','No causal yield or income effect is estimated for the selected field.']};
 }
+
+// Equal-length observed windows. These are descriptive departures, not a climate trend test.
+export function auditPower(data, baselineEnd=2020){
+  if(!data)return null;
+  const before=data.years.filter(y=>y.year<=baselineEnd);
+  const after=data.years.filter(y=>y.year>baselineEnd);
+  if(before.length<3||after.length<3)return null;
+  const measure=(rows)=>({rain:Math.round(median(rows.map(y=>y.seasonRain))),hot:Math.round(median(rows.map(y=>y.seasonHot))),wet:+median(rows.map(y=>y.rootWetness)).toFixed(3),et:+median(rows.map(y=>y.etFlux)).toFixed(2)});
+  const baseline=measure(before),recent=measure(after);
+  const delta={rain:recent.rain-baseline.rain,hot:recent.hot-baseline.hot,wet:+(recent.wet-baseline.wet).toFixed(3),et:+(recent.et-baseline.et).toFixed(2)};
+  const rainPercent=Math.round(100*delta.rain/Math.max(baseline.rain,1));
+  const signals=[
+    {key:'rain',label:'Seasonal precipitation',value:rainPercent,unit:'%',magnitude:Math.abs(rainPercent),adverse:rainPercent<0},
+    {key:'hot',label:'Hot-day exposure',value:delta.hot,unit:' days',magnitude:Math.abs(delta.hot)/Math.max(baseline.hot,5)*100,adverse:delta.hot>0},
+    {key:'wet',label:'Modeled root-zone wetness',value:delta.wet,unit:' fraction',magnitude:Math.abs(delta.wet)/Math.max(baseline.wet,.1)*100,adverse:delta.wet<0}
+  ];
+  const adverse=signals.filter(s=>s.adverse).sort((a,b)=>b.magnitude-a.magnitude);
+  return {baseline,recent,delta,rainPercent,signals,primary:adverse[0]||null,
+    baselinePeriod:`${before[0].year}–${before.at(-1).year}`,
+    recentPeriod:`${after[0].year}–${after.at(-1).year}`,
+    evidence:`${before.length} baseline years · ${after.length} recent years`,
+    interpretation:adverse.length?'At least one exposure indicator shifted in an unfavorable direction. Review field records before changing crops.':'These selected exposure indicators do not show a clear adverse shift between the two windows. This does not establish crop suitability.'};
+}
