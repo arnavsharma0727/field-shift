@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {summarizePower,assessPathways,evidencePacket} from '../dist/analytics.js';
+import {summarizePower,assessPathways,evidencePacket,auditPower} from '../dist/analytics.js';
 
 function fixture(start=2018,end=2022){
   const keys=['PRECTOTCORR','T2M_MAX','GWETROOT','EVPTRNS'];
@@ -59,4 +59,22 @@ test('Southern Hemisphere season joins November–December to the following Janu
   assert.equal(data.driest.rootWetness,.15);
   assert.equal(data.driest.seasonRain,30);
   assert.match(data.seasonLabel,/season ending year/);
+});
+
+test('assumption audit reports observed window medians and withholds short windows',()=>{
+  assert.equal(auditPower(summarizePower(fixture(),38)),null);
+  const raw=fixture(2016,2025);
+  for(const day of Object.keys(raw.properties.parameter.PRECTOTCORR)){
+    if(day>='20210101'&&Number(day.slice(4,6))>=5&&Number(day.slice(4,6))<=9){
+      raw.properties.parameter.PRECTOTCORR[day]=.4;
+      raw.properties.parameter.T2M_MAX[day]=35;
+      raw.properties.parameter.GWETROOT[day]=.22;
+    }
+  }
+  const audit=auditPower(summarizePower(raw,38));
+  assert.equal(audit.baselinePeriod,'2016–2020');
+  assert.equal(audit.recentPeriod,'2021–2025');
+  assert.ok(audit.rainPercent<0);
+  assert.ok(audit.delta.hot>0);
+  assert.equal(audit.evidence,'5 baseline years · 5 recent years');
 });
