@@ -48,7 +48,7 @@ function render(){
     $('water-signal').textContent='Root-zone wetness and evapotranspiration energy are checked separately from rainfall.';
   }
   const paths=assessPathways(record,c);
-  $('pathways').innerHTML=paths.map((s,i)=>`<article class="card path"><div class="number">0${i+1} / ${i?'CHANGE HYPOTHESIS':'BASELINE'}</div><h4>${escapeHTML(s.title)}</h4><div class="sequence">${escapeHTML(s.sequence)}</div><p>${escapeHTML(s.hypothesis)}</p><span class="gate ${escapeHTML(s.severity)}">${escapeHTML(s.gate)}</span><ul>${s.reasons.map(r=>`<li>${escapeHTML(r)}</li>`).join('')}</ul><div class="measure"><strong>Measure in a trial</strong><br>${escapeHTML(s.measure)}</div></article>`).join('');
+  $('pathways').innerHTML=paths.map((s,i)=>`<article class="card path"><div class="number">0${i+1} / ${i?'CHANGE HYPOTHESIS':'BASELINE'}</div><h4>${escapeHTML(s.title)}</h4><div class="sequence">${escapeHTML(s.sequence)}</div><p>${escapeHTML(s.hypothesis)}</p><span class="gate ${escapeHTML(s.severity)}">${escapeHTML(s.gate)}</span><ul>${s.reasons.map(r=>`<li>${escapeHTML(r)}</li>`).join('')}</ul><div class="measure"><strong>Measure in a trial</strong><br>${escapeHTML(s.measurement)}</div></article>`).join('');
 }
 async function loadNASA(){
   const c=inputs();if(!valid(c)){status('Check farm inputs','error');$('notice').textContent='Enter valid coordinates and a bare-ground count from 0 to 12 months.';return;}
