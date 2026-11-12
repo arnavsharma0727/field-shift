@@ -1,4 +1,4 @@
-import {summarizePower,assessPathways,evidencePacket} from './analytics.js';
+import {summarizePower,assessPathways,evidencePacket} from './analytics.js?v=2';
 
 const $=id=>document.getElementById(id);
 const presets={
@@ -42,7 +42,7 @@ function render(){
     $('analog-percent').textContent=`${Math.round((1-ratio)*100)}% less rain`;
     $('analog-copy').textContent=`In ${record.driest.year}, growing-season rainfall was ${record.driest.seasonRain} mm versus a ${record.medianSeasonRain} mm median. This is an observed year, selected by rainfall only.`;
     const wetDelta=Math.round((record.driest.rootWetness/Math.max(record.medianRootWetness,.001)-1)*100);
-    $('water-signal').innerHTML=`<b>Independent water check</b><br>Modeled root-zone wetness was ${Math.abs(wetDelta)}% ${wetDelta<0?'below':'above'} the historical median (${record.medianRootWetness.toFixed(2)}). Evapotranspiration energy flux averaged ${record.driest.etFlux.toFixed(2)} MJ/m²/day in this growing season.`;
+    $('water-signal').innerHTML=`<b>Additional water signal</b><br>Modeled root-zone wetness was ${Math.abs(wetDelta)}% ${wetDelta<0?'below':'above'} the historical median (${record.medianRootWetness.toFixed(2)}). Evapotranspiration energy flux averaged ${record.driest.etFlux.toFixed(2)} MJ/m²/day in this growing season.`;
   }else{
     $('analog-percent').textContent='—';$('analog-copy').textContent='Loading the record. The app selects the driest observed growing season and compares it with the median.';
     $('water-signal').textContent='Root-zone wetness and evapotranspiration energy are checked separately from rainfall.';
