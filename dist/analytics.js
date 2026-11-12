@@ -18,22 +18,28 @@ export function summarizePower(raw, latitude=38.45){
   const keys=['PRECTOTCORR','T2M_MAX','GWETROOT','EVPTRNS'];
   if(!keys.every(key=>p?.[key]))throw new Error('Required NASA POWER series are missing');
   const warmMonths=latitude>=0 ? new Set([5,6,7,8,9]) : new Set([11,12,1,2,3]);
-  const years=new Map();
+  const years=new Map(), seasons=new Map();
   for(const day of Object.keys(p.PRECTOTCORR).sort()){
     const rain=Number(p.PRECTOTCORR[day]), heat=Number(p.T2M_MAX[day]);
     const wet=Number(p.GWETROOT[day]), et=Number(p.EVPTRNS[day]);
     if(!/^\d{8}$/.test(day)||!validNumber(rain,0,500)||!validNumber(heat,-80,80)||!validNumber(wet,0,1)||!validNumber(et,0,50))continue;
     const year=Number(day.slice(0,4)),month=Number(day.slice(4,6));
     if(month<1||month>12)continue;
-    if(!years.has(year))years.set(year,{year,days:0,rain:0,hot:0,maxDry:0,dryRun:0,seasonDays:0,seasonRain:0,seasonHot:0,wet:[],et:[],monthly:Array(12).fill(0)});
+    if(!years.has(year))years.set(year,{year,days:0,rain:0,hot:0,maxDry:0,dryRun:0,monthly:Array(12).fill(0)});
     const row=years.get(year);row.days++;row.rain+=rain;row.hot+=heat>=32?1:0;
     row.dryRun=rain<1?row.dryRun+1:0;row.maxDry=Math.max(row.maxDry,row.dryRun);row.monthly[month-1]+=rain;
-    if(warmMonths.has(month)){row.seasonDays++;row.seasonRain+=rain;row.seasonHot+=heat>=32?1:0;row.wet.push(wet);row.et.push(et);}
+    if(warmMonths.has(month)){
+      const seasonYear=latitude<0&&month>=11?year+1:year;
+      if(!seasons.has(seasonYear))seasons.set(seasonYear,{days:0,rain:0,hot:0,wet:[],et:[]});
+      const season=seasons.get(seasonYear);season.days++;season.rain+=rain;season.hot+=heat>=32?1:0;season.wet.push(wet);season.et.push(et);
+    }
   }
-  const complete=[...years.values()].filter(y=>y.days>=300&&y.seasonDays>=110).map(y=>({
-    year:y.year,days:y.days,annualRain:Math.round(y.rain),seasonRain:Math.round(y.seasonRain),hotDays:y.hot,seasonHot:y.seasonHot,
-    maxDry:y.maxDry,rootWetness:+mean(y.wet).toFixed(3),etFlux:+mean(y.et).toFixed(2),monthly:y.monthly.map(Math.round)
-  })).sort((a,b)=>a.year-b.year);
+  const complete=[...years.values()].filter(y=>y.days>=300&&seasons.get(y.year)?.days>=110).map(y=>{
+    const season=seasons.get(y.year);
+    return {
+    year:y.year,days:y.days,annualRain:Math.round(y.rain),seasonRain:Math.round(season.rain),hotDays:y.hot,seasonHot:season.hot,
+    maxDry:y.maxDry,rootWetness:+mean(season.wet).toFixed(3),etFlux:+mean(season.et).toFixed(2),monthly:y.monthly.map(Math.round)
+  }}).sort((a,b)=>a.year-b.year);
   if(complete.length<5)throw new Error('At least five complete years are required');
   const driest=[...complete].sort((a,b)=>a.seasonRain-b.seasonRain || b.seasonHot-a.seasonHot)[0];
   return {
@@ -44,7 +50,7 @@ export function summarizePower(raw, latitude=38.45){
     medianSeasonHot:Math.round(median(complete.map(y=>y.seasonHot))),
     meanAnnualRain:Math.round(mean(complete.map(y=>y.annualRain))),
     driest,
-    seasonLabel:latitude>=0?'May–September':'November–March (calendar-year grouping)',
+    seasonLabel:latitude>=0?'May–September':'November–March (season ending year)',
     source:raw.header?.sources?.join(', ')||'NASA POWER',
     queryMetadata:{start:raw.header?.start,end:raw.header?.end,timeStandard:raw.header?.time_standard||'LST'}
   };
